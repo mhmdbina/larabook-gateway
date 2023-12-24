@@ -2,21 +2,21 @@
 
 namespace Larabookir\Gateway;
 
-use Larabookir\Gateway\Irankish\Irankish;
-use Larabookir\Gateway\Parsian\Parsian;
-use Larabookir\Gateway\Paypal\Paypal;
-use Larabookir\Gateway\Sadad\Sadad;
-use Larabookir\Gateway\Mellat\Mellat;
-use Larabookir\Gateway\Pasargad\Pasargad;
-use Larabookir\Gateway\Saman\Saman;
-use Larabookir\Gateway\Asanpardakht\Asanpardakht;
-use Larabookir\Gateway\Zarinpal\Zarinpal;
-use Larabookir\Gateway\Payir\Payir;
-use Larabookir\Gateway\Exceptions\RetryException;
-use Larabookir\Gateway\Exceptions\PortNotFoundException;
+use Illuminate\Support\Facades\DB;
 use Larabookir\Gateway\Exceptions\InvalidRequestException;
 use Larabookir\Gateway\Exceptions\NotFoundTransactionException;
-use Illuminate\Support\Facades\DB;
+use Larabookir\Gateway\Exceptions\PortNotFoundException;
+use Larabookir\Gateway\Exceptions\RetryException;
+use Larabookir\Gateway\Gateways\Asanpardakht\Asanpardakht;
+use Larabookir\Gateway\Gateways\Irankish\Irankish;
+use Larabookir\Gateway\Gateways\Parsian\Parsian;
+use Larabookir\Gateway\Gateways\Pasargad\Pasargad;
+use Larabookir\Gateway\Gateways\Payir\Payir;
+use Larabookir\Gateway\Gateways\Paypal\Paypal;
+use Larabookir\Gateway\Gateways\Sadad\Sadad;
+use Larabookir\Gateway\Gateways\Saman\Saman;
+use Larabookir\Gateway\Mellat\Mellat;
+use Larabookir\Gateway\Zarinpal\Zarinpal;
 
 class GatewayResolver
 {
@@ -45,8 +45,7 @@ class GatewayResolver
 		$this->config = app('config');
 		$this->request = app('request');
 
-		if ($this->config->has('gateway.timezone'))
-			date_default_timezone_set($this->config->get('gateway.timezone'));
+        date_default_timezone_set('Asia/Tehran');
 
 		if (!is_null($port)) $this->make($port);
 	}
@@ -83,7 +82,7 @@ class GatewayResolver
 	 */
 	function getTable()
 	{
-		return DB::table($this->config->get('gateway.table'));
+		return DB::table('gateway_transactions');
 	}
 
 	/**

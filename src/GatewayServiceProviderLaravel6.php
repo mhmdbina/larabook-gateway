@@ -4,6 +4,7 @@ namespace Larabookir\Gateway;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
+use Larabookir\Gateway\Models\GatewayConfig;
 
 class GatewayServiceProviderLaravel6 extends ServiceProvider
 {
@@ -21,20 +22,20 @@ class GatewayServiceProviderLaravel6 extends ServiceProvider
 	 */
 	public function boot()
 	{
-        $config = __DIR__ . '/../config/gateway.php';
+//        $config = __DIR__ . '/../config/gateway.php';
         $migrations = __DIR__ . '/../migrations/';
         $views = __DIR__ . '/../views/';
 
         //php artisan vendor:publish --provider=Larabookir\Gateway\GatewayServiceProvider --tag=config
-        $this->publishes([
-            $config => config_path('gateway.php'),
-        ], 'config')
-        ;
+//        $this->publishes([
+//            $config => config_path('gateway.php'),
+//        ], 'gateway.config')
+//        ;
 
         // php artisan vendor:publish --provider=Larabookir\Gateway\GatewayServiceProvider --tag=migrations
         $this->publishes([
             $migrations => base_path('database/migrations')
-        ], 'migrations');
+        ], 'gateway.migrations');
 
 
         $this->loadViewsFrom($views, 'gateway');
@@ -42,9 +43,13 @@ class GatewayServiceProviderLaravel6 extends ServiceProvider
         // php artisan vendor:publish --provider=Larabookir\Gateway\GatewayServiceProvider --tag=views
         $this->publishes([
             $views => base_path('resources/views/vendor/gateway'),
-        ], 'views');
+        ], 'gateway.views');
 
-        //$this->mergeConfigFrom( $config,'gateway')
+//        $this->mergeConfigFrom( $config,'gateway')
+
+        foreach (GatewayConfig::getConfigs() as $key => $value) {
+            config(['gateway.' . $key => $value]);
+        }
 	}
 
 	/**

@@ -5,9 +5,10 @@ namespace Larabookir\Gateway\Mellat;
 use DateTime;
 use Illuminate\Support\Facades\Request;
 use Larabookir\Gateway\Enum;
-use SoapClient;
+use Larabookir\Gateway\Models\GatewayConfig;
 use Larabookir\Gateway\PortAbstract;
 use Larabookir\Gateway\PortInterface;
+use SoapClient;
 
 class Mellat extends PortAbstract implements PortInterface
 {
@@ -72,6 +73,16 @@ class Mellat extends PortAbstract implements PortInterface
 		return $this;
 	}
 
+    /**
+     * Set the user ID to retrieve configurations
+     * @param $user_id
+     */
+    function setUser($user_id)
+    {
+        $this->user_id = $user_id;
+        return $this;
+    }
+
 	/**
 	 * Gets callback url
 	 * @return string
@@ -79,7 +90,7 @@ class Mellat extends PortAbstract implements PortInterface
 	function getCallback()
 	{
 		if (!$this->callbackUrl)
-			$this->callbackUrl = $this->config->get('gateway.mellat.callback-url');
+			$this->callbackUrl = GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'callback-url');
 
 		return $this->makeCallback($this->callbackUrl, ['transaction_id' => $this->transactionId()]);
 	}
@@ -98,9 +109,9 @@ class Mellat extends PortAbstract implements PortInterface
 		$this->newTransaction();
 
 		$fields = array(
-			'terminalId' => $this->config->get('gateway.mellat.terminalId'),
-			'userName' => $this->config->get('gateway.mellat.username'),
-			'userPassword' => $this->config->get('gateway.mellat.password'),
+			'terminalId' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'terminalId'),
+			'userName' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'username'),
+			'userPassword' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'password'),
 			'orderId' => $this->transactionId(),
 			'amount' => $this->amount,
 			'localDate' => $dateTime->format('Ymd'),
@@ -165,9 +176,9 @@ class Mellat extends PortAbstract implements PortInterface
 	protected function verifyPayment()
 	{
 		$fields = array(
-			'terminalId' => $this->config->get('gateway.mellat.terminalId'),
-			'userName' => $this->config->get('gateway.mellat.username'),
-			'userPassword' => $this->config->get('gateway.mellat.password'),
+			'terminalId' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'terminalId'),
+			'userName' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'username'),
+			'userPassword' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'password'),
 			'orderId' => $this->transactionId(),
 			'saleOrderId' => $this->transactionId(),
 			'saleReferenceId' => $this->trackingCode()
@@ -203,9 +214,9 @@ class Mellat extends PortAbstract implements PortInterface
 	protected function settleRequest()
 	{
 		$fields = array(
-			'terminalId' => $this->config->get('gateway.mellat.terminalId'),
-			'userName' => $this->config->get('gateway.mellat.username'),
-			'userPassword' => $this->config->get('gateway.mellat.password'),
+			'terminalId' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'terminalId'),
+			'userName' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'username'),
+			'userPassword' => GatewayConfig::getSpecifiedFieldUserConfigs($this->user_id, 'mellat', 'password'),
 			'orderId' => $this->transactionId(),
 			'saleOrderId' => $this->transactionId(),
 			'saleReferenceId' => $this->trackingCode

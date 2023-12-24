@@ -52,6 +52,13 @@ abstract class PortAbstract
 	 */
 	protected $amount;
 
+    /**
+     * User ID to retrieve configurations
+     *
+     * @var int
+     */
+    protected $user_id;
+
 	/**
 	 * Description of transaction
 	 *
@@ -107,7 +114,7 @@ abstract class PortAbstract
 	 */
 	function getTable()
 	{
-		return $this->db->table($this->config->get('gateway.table'));
+		return $this->db->table('gateway_transactions');
 	}
 
 	/**
@@ -115,7 +122,7 @@ abstract class PortAbstract
 	 */
 	function getLogTable()
 	{
-		return $this->db->table($this->config->get('gateway.table') . '_logs');
+		return $this->db->table('gateway_transactions' . '_logs');
 	}
 
 	/**
